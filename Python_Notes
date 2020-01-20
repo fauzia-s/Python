@@ -1,0 +1,1305 @@
+Reference:
+https://www.toptal.com/python/interview-questions
+
+
+http://www.techdarting.com/2014/03/why-different-flavors-of-python.html
+
+Cpython is de-facto python implementation.
+Python--interpreted or complied?
+-compiled to create a .pyc file if imported in an application as in import pscript
+-interpreted if executed directly as python pscript.py
+
+
+Python will fall under byte code interpreted. .py source code is first compiled to byte code as .pyc.
+ This byte code can be interpreted (official CPython), or JIT compiled (PyPy). Python source code (.py) 
+ can be compiled to different byte code also like IronPython (.Net) or Jython (JVM). 
+ There are multiple implementations of Python language.
+ The official one is a byte code interpreted one. There are byte code JIT compiled implementations too.
+
+
+ .pyc is byte code for Python Virtual machine just like .class is for JVM in Java
+https://softwareengineering.stackexchange.com/questions/24558/is-python-interpreted-or-compiled
+
+
+***Python notes***
+Why preferred over Unix:
+-Unix->limited coverage->html parsing,etc
+-Python is user friendly bare-bones type of language
+-1000''s of libraries with advanced utilities->scipy,pandas
+-Code reuse is simple,can be imported,extended
+-Not Overly complicated and less intuitive
+
+
+In depth:
+1)Variable Scope:
+All variable assignments in a function store the value in the local symbol table; whereas variable references first look in the local symbol table, then in the local symbol tables of enclosing functions, then in the global symbol table, and finally in the table of built-in names.
+
+2)Data Structures:
+-List:result=[]->result.append(a)->append is one of the methods which is a function that belongs to the list object.
+-Dictionary
+
+
+
+-Functions:
+Argument types:
+-Default,Keyword,Arbitary argument list
+-Default:
+def ask_ok(prompt, retries=4, reminder='Please try again!'):
+    while True:
+        ok = input(prompt)
+        if ok in ('y', 'ye', 'yes'):
+            return True
+        if ok in ('n', 'no', 'nop', 'nope'):
+            return False
+        retries = retries - 1
+        if retries < 0:
+            raise ValueError('invalid user response')
+        print(reminder)
+Possible values during function call:
+giving only the mandatory argument: ask_ok('Do you really want to quit?')
+giving one of the optional arguments: ask_ok('OK to overwrite the file?', 2)
+or even giving all arguments: ask_ok('OK to overwrite the file?', 2, 'Come on, only yes or no!')
+
+-Keyword arguments:kwarg=value
+def parrot(voltage, state='a stiff', action='voom', type='Norwegian Blue'):
+    print("-- This parrot wouldn't", action, end=' ')
+    print("if you put", voltage, "volts through it.")
+    print("-- Lovely plumage, the", type)
+    print("-- It's", state, "!")
+accepts one required argument (voltage) and three optional arguments (state, action, and type). This function can be called in any of the following ways:
+
+parrot(1000)                                          # 1 positional argument
+parrot(voltage=1000)                                  # 1 keyword argument
+parrot(voltage=1000000, action='VOOOOOM')             # 2 keyword arguments
+parrot(action='VOOOOOM', voltage=1000000)             # 2 keyword arguments
+parrot('a million', 'bereft of life', 'jump')         # 3 positional arguments
+parrot('a thousand', state='pushing up the daisies')  # 1 positional, 1 keyword
+
+but all the following calls would be invalid:
+
+parrot()                     # required argument missing
+parrot(voltage=5.0, 'dead')  # non-keyword argument after a keyword argument
+parrot(110, voltage=220)     # duplicate value for the same argument
+parrot(actor='John Cleese')  # unknown keyword argument
+
+When a final formal parameter of the form **name is present, it receives a dictionary (see Mapping Types — dict) containing all keyword arguments except for those corresponding to a formal parameter. This may be combined with a formal parameter of the form *name (described in the next subsection) which receives a tuple containing the positional arguments beyond the formal parameter list. (*name must occur before **name.) For example, if we define a function like this:
+
+def cheeseshop(kind, *arguments, **keywords):
+    print("-- Do you have any", kind, "?")
+    print("-- I'm sorry, we're all out of", kind)
+    for arg in arguments:
+        print(arg)
+    print("-" * 40)
+    keys = sorted(keywords.keys())
+    for kw in keys:
+        print(kw, ":", keywords[kw])
+It could be called like this:
+
+cheeseshop("Limburger", "It's very runny, sir.",
+           "It's really very, VERY runny, sir.",
+           shopkeeper="Michael Palin",
+           client="John Cleese",
+           sketch="Cheese Shop Sketch")
+and of course it would print:
+
+-- Do you have any Limburger ?
+-- I'm sorry, we're all out of Limburger
+It's very runny, sir.
+It's really very, VERY runny, sir.
+----------------------------------------
+client : John Cleese
+shopkeeper : Michael Palin
+sketch : Cheese Shop Sketch
+
+-Arbitary argument list:
+Finally, the least frequently used option is to specify that a function can be called with an arbitrary number of arguments. These arguments will be wrapped up in a tuple (see Tuples and Sequences). Before the variable number of arguments, zero or more normal arguments may occur.
+
+def write_multiple_items(file, separator, *args):
+    file.write(separator.join(args))
+Normally, these variadic arguments will be last in the list of formal parameters, because they scoop up all remaining input arguments that are passed to the function. Any formal parameters which occur after the *args parameter are ‘keyword-only’ arguments, meaning that they can only be used as keywords rather than positional arguments.
+
+>>>
+>>> def concat(*args, sep="/"):
+...     return sep.join(args)
+...
+>>> concat("earth", "mars", "venus")
+'earth/mars/venus'
+>>> concat("earth", "mars", "venus", sep=".")
+'earth.mars.venus'
+
+-Unpacking Argument Lists
+The reverse situation occurs when the arguments are already in a list or tuple but need to be unpacked for a function call requiring separate positional arguments. For instance, the built-in range() function expects separate start and stop arguments. If they are not available separately, write the function call with the *-operator to unpack the arguments out of a list or tuple:
+
+>>>
+>>> list(range(3, 6))            # normal call with separate arguments
+[3, 4, 5]
+>>> args = [3, 6]
+>>> list(range(*args))           # call with arguments unpacked from a list
+[3, 4, 5]
+In the same fashion, dictionaries can deliver keyword arguments with the **-operator:
+
+>>>
+>>> def parrot(voltage, state='a stiff', action='voom'):
+...     print("-- This parrot wouldn't", action, end=' ')
+...     print("if you put", voltage, "volts through it.", end=' ')
+...     print("E's", state, "!")
+...
+>>> d = {"voltage": "four million", "state": "bleedin' demised", "action": "VOOM"}
+>>> parrot(**d)
+-- This parrot wouldn't VOOM if you put four million volts through it. E's bleedin' demised !
+
+***Function annotations:
+Function annotations are completely optional metadata information about the types used by user-defined functions (see PEP 484 for more information).
+
+Annotations are stored in the __annotations__ attribute of the function as a dictionary and have no effect on any other part of the function. Parameter annotations are defined by a colon after the parameter name, followed by an expression evaluating to the value of the annotation. Return annotations are defined by a literal ->, followed by an expression, between the parameter list and the colon denoting the end of the def statement. The following example has a positional argument, a keyword argument, and the return value annotated:
+
+>>>
+>>> def f(ham: str, eggs: str = 'eggs') -> str:
+...     print("Annotations:", f.__annotations__)
+...     print("Arguments:", ham, eggs)
+...     return ham + ' and ' + eggs
+...
+>>> f('spam')
+Annotations: {'ham': <class 'str'>, 'return': <class 'str'>, 'eggs': <class 'str'>}
+Arguments: spam eggs
+'spam and eggs'
+
+** Lambda Expressions
+Small anonymous functions can be created with the lambda keyword. This function returns the sum of its two arguments: lambda a, b: a+b. 
+Lambda functions can be used wherever function objects are required. They are syntactically restricted to a single expression. 
+Semantically, they are just syntactic sugar for a normal function definition. Like nested function definitions, lambda functions can reference variables from the containing scope:
+
+>>>
+>>> def make_incrementor(n):
+...     return lambda x: x + n
+...
+>>> f = make_incrementor(42)
+>>> f(0)
+42
+>>> f(1)
+43
+
+*****Lists:
+-Eg:List methods:insert(),append(),pop(),remove(),reverse(),sort()
+-Using list as stacks:
+collection.deque:to use pop and insert from both sides of queue
+>>> from collections import deque
+>>> queue = deque(["Eric", "John", "Michael"])
+>>> queue.append("Terry")           # Terry arrives
+>>> queue.append("Graham")          # Graham arrives
+>>> queue.popleft()                 # The first to arrive now leaves
+'Eric'
+>>> queue.popleft()                 # The second to arrive now leaves
+'John'
+>>> queue                           # Remaining queue in order of arrival
+deque(['Michael', 'Terry', 'Graham'])
+
+List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
+For example, assume we want to create a list of squares, like:
+>>>
+>>> squares = []
+>>> for x in range(10):
+...     squares.append(x**2)
+...
+>>> squares
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+**************
+squares = list(map(lambda x: x**2, range(10)))
+or, equivalently:
+
+squares = [x**2 for x in range(10)]
+**********
+
+Difference in remove,del,pop:pop : Takes Index & returns Value;remove : Takes value, removes first occurrence and returns nothing;delete : Takes index, removes value at that index and returns nothing
+
+
+>>> a = [0, 2, 2, 3]
+>>> a.remove(2)
+>>> a
+[0, 2, 3]
+del removes a specific index:
+
+>>> a = [3, 2, 2, 1]
+>>> del a[1]
+[3, 2, 1]
+and pop returns the removed element:
+
+>>> a = [4, 3, 5]
+>>> a.pop(1)
+3
+>>> a
+[4, 5]
+
+list.index(obj) − Returns the lowest index in list that obj appears.
+list.insert(index, obj) − Inserts object obj into list at offset index.
+list.pop(obj=list[-1]) − Removes and returns last object or obj from list.
+->x.pop(x[-1])     -->x=[1,2,3,4]
+**********
+
+Passing arguments to a script:sys.argv[:]
+ cat test_param.py
+import sys
+
+
+print("Arguments are:")
+for arg in sys.argv[:]:
+   print(arg)
+
+ python test_param.py "hi" "hello" "hmm" 1 2 3
+
+***Running a function for different parameters in parallel
+from  threading import Thread
+
+Other modules:multiprocessing,queues(for exchangeing info between different processes)
+
+
+***Sample unix program and its conversion into Python:***
+
+1)
+Unix
+cat /export/home/fauzshai/test_python | sort | uniq | wc -l
+->6
+
+Python:
+
+
+
+
+Functions:
+def fib(n):
+   a, b = 0, 1
+   while a < n:
+    print(a, end=" ")
+    a, b= b, a+b
+   print()
+
+
+Square:
+
+def square(n):
+	a=0
+  b=0
+	for a in range(0,n):
+		for b in  range(0,n):
+			print('*',end='')
+			break
+ 		else:
+ 	    	print('\n')
+
+Decimals:        
+5/2 = 2
+5.0/2 = 2.5
+5//2 = 2
+5.0//2.0 = 2.0        
+
+--Check Palindrome:Pending
+
+def check_palindrome(str):
+    x=len(str)
+    t=-1
+    for i in range(0,x):
+        
+        if str[i]=str[t]:
+            continue
+        else:
+            break
+         t=-t-1
+*********
+Date:Nov 14
+**********
+
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+
+You may assume that each input would have exactly one solution.
+
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+
+*****Udemy Python***
+python program consists of Object;Methods and Functions
+Can execute python 3 ways:Script;terminal;editor(sublime and run the build)
+
+*****
+Dec 6
+*****
+Number data types:Int;float;complex numbers(56j)
+checks data type of a value:
+type(10);type("Fauzia")
+Changind type:
+float(8)->8.0
+int(8.123)->8 just trims the Decimal
+round(8.6)->9
+round(8.2)->8
+
+*Math functions:preference:**(exponent);/(div);*(mult);+-
+import math;->extended module->to use sqrt function to chk for other functions->dir(math) to get the definition of a function isfinite->help(math.isfinite)
+
+Exercise 1:Create a function to convert celsius to fahrenheit.
+0 degree is 32
+
+def degree_to_celsius(celsius):
+    fah=celsius*9/5+32
+    return(fah)
+
+******
+Dec 13
+****
+Lists,Tuples
+li=['Today',1,23.40]
+
+del li[1] removes item at index 
+li.insert(index,value)->opp of delete
+li.remove('Today') if dont know index and want to remove it
+
+functions=[currency_converter(100,1000),currency_converter(200,10000)]->output:[10000,20000]
+
+tuples:immutable data types->t=(1,2,3) exmaples:geographical co-ordinates..round brackets
+can be used to assign values to multiple variables through input provided:
+eg:
+input_recieved=input("Enter age and income:")
+print(input_recieved)->29,15000
+(age,income)=input_recieved.split(",")
+print(age)-'29'
+print(income)-'15000'
+
+-Can put a tuple on left and right hand side of an assignment statement:
+(x,y)=(10,20)  //constants must be on left handsie and vairable handlers on right hand side
+
+-Tuples are comparable:
+
+>>> (1,0,4)==(1,5,6)
+False
+>>> (1,0,4)==(1,0,4)
+True
+
+Starts comparing each item from left:1->1;2->3;6->4  :if value same then goes to the next number else returns T/F
+>>> (1,3,6)>(1,3,4)
+True
+>>> (1,3,6)>(1,3,7)
+False
+>>>
+
+
+WHY to use tuples then?
+Much more simple and efficient in terms of memory use and performance
+
+-When using temporary variables use tuples over lists
+-When you're using a list that u'll never change like geographical co-ordinates,states in a country,etc
+******
+
+x=[1,2,3,4,5]
+x[1:-1]
+
+set:unordered collection of unique items-->a list with duplicate items can be converted into a set to remove the dups:example:fileset=set(filelist)..where filelist=[2016,2017,2017]
+fileset={2017,2016,2015}
+
+dictionary:pair of key values
+dict={}
+dict={"name":"Fauzia","profession":"Engineer"}
+dict.values():
+dict_values([Fauzia,Engineer])->different data type
+convert to list as :a=list(dict.values())
+moms={}
+>>> moms["Fauzia"]="Zayd"
+>>> moms["Pranjali"]="Vipransh"
+>>> moms["Amita"]="Vivaan"
+>>> moms
+{'Fauzia': 'Zayd', 'Pranjali': 'Vipransh', 'Amita': 'Vivaan'}
+>>>
+>>> moms.get("Fauzia")--safely returns value no error if not found
+'Zayd'
+>>> moms.get("Dipti")
+>>> moms["Dipti"]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'Dipti'
+
+--get()
+dict.get('Fauzia'->key,0->default)
+count occurence of a word in a file:
+count[word]=count.get(word,0)+1
+
+--Add data to dictionart:
+dict[key]=value
+
+--Sort
+-Dictionaries do not have sort function->convert into a list of tuples using .items() and then sort into a new list using for loop(Check assignments)
+-use list comprehension to perform the above step
+
+
+-Printing 10 from the following dictionary:
+money={"saving_account":200, "checking_account":100, "under_bed":[500,10,100]}
+
+Ans1:
+a=list(money.values())
+a[2][1]
+
+Ans2:money["under_bed"]->[500,10,100]
+list(money["under_bed"])[1]->10
+
+***Conditional**
+inline if:
+a=3
+>>print("Positive" if a>0 else "Negative")
+
+Exercise:Section4 Lecture 24:
+
+def celsius_to_fah(celsius):
+    fah=celsius*9/5+32
+    if(fah<-273.15):
+       print("Incorrect value of celsius passed!Cannot be lower than -273.15 F")
+
+    else
+       print("Fah:"fah)
+
+****User input**
+planet=input("Which planet are you from?")       
+By default the input value is considered string so have to typecast it before performing any calculations
+
+**Dec 27**
+***File handling**
+
+-Open and manipulate the contents in python
+#open python in the dir where file is present
+file=open("for_2.py",'r') --opens file in read mode
+content=file.read()   --stores contents of 'file' in content
+print(content)
+
+file.seek(0)->pointer to 0th position in the file which goes to the last position once the file is read.
+--Store the contents line by line in a list:
+content=file.readlines()
+content[0]:0th i.e first line
+
+content
+['def celsius_to_fah(celsius):\n', '    fah=celsius*9/5+32\n', '    if(fah<-273.15):\n', '        print("Incorrect value of celsius passed!C
+annot be lower than -273.15 F")\n', '    else:\n', '        print(fah)\n', '\n', 'temperatures=[10,-20,-289,100]\n', '\n', 'for temp in temp
+eratures:\n', '   celsius_to_fah(temp)\n']
+--remove \n from the content:
+
+content_san_newline=[i.rstrip('\n') for i in content]
+content_san_newline
+['def celsius_to_fah(celsius):', '    fah=celsius*9/5+32', '    if(fah<-273.15):', '        print("Incorrect value of celsius passed!Cannot
+be lower than -273.15 F")', '    else:', '        print(fah)', '', 'temperatures=[10,-20,-289,100]', '', 'for temp in temperatures:', '   ce
+lsius_to_fah(temp)']
+--Can be used instead of while loop in unix to read the lines in file
+
+lines=["Line 1 ","Line 2","Line 3","Line 4"]
+file=open("file_write_loop.txt",'w')
+for l in lines:
+    file.write(l+"\n")
+
+file.close()   
+----Appending lines --'a'
+
+r=read;
+r+=read and write,pointer at 0
+w=write
+w+=read and write,overwrite if exists as pointer is at the begining,creates new if does not exist
+a=appends,pointer at the end,creates new if does not exist
+a+=append and read,pointer at the end if exists
+
+**WITH statement**
+-helps write cleaner code while handlin files
+-do not need to close the files
+
+Misc:everything after the colon needs to be indented
+
+with open("file_write_loop.txt",a+) as file:
+    file.seek(0)
+    content=file.read()
+
+****
+
+Write c_to_f function take values from temperatures=[10,-20,-289,100]
+calculate fah and store in another file:
+expected content in output file:
+50.0
+-4.0
+212.0
+
+Please don't write any message in the text file when input is lower than -273.15.
+
+def c_to_f(celsius):
+    if(celsius>=-273.15):
+        fah=celsius*9/5+32
+    return(f)
+
+temperatures=[10,-20,-289,100]
+
+with open("converted_fah.txt",'a+'):
+    for temp in temperatures:
+        file.write(c_to_f(temp))
+
+OR:
+temperatures=[10,-20,-289,100]
+
+def write_fah(temperature_list):
+    with open("converted_fah2.txt",'w') as file:
+        for temp in temperatures:
+            f=temp*9/5+32
+            file.write(str(f)+"\n")
+
+write_fah(temperatures)
+'
+
+Dec 28
+***Modules,libraries and packages:
+--Module: a .py file with functions
+os.__file__->location of .py file
+
+get list of file paths:
+import os->Module:file handling functions like chmod,chown,list,truncate,umask,etc
+os.listdir('.')
+dir(os) --to get list of all functions in the current module
+help(os)>to know more
+
+--Library:collection of .py files
+Modules and libraries come by default installtion
+
+--Packages:third party libs and modules that you might not need hence don't come with default installation
+pip install glob2
+pip is a library that comes installed with python
+-pip is a package management system used to install and manage software packages written in Python. Many packages can be found in the Python Package Index (PyPI).[4]
+###########
+su root
+Password:
+sh-3.2# pip install glob2
+Collecting glob2
+  Downloading glob2-0.5-py2.py3-none-any.whl
+Installing collected packages: glob2
+Successfully installed glob2-0.5
+#########
+pip3.6 install glob2
+
+curl https://bootstrap.pypa.io/get-pip.py | python
+
+glob2.glob("*")->lists all files
+glob2.glob("*.txt")->lists all text files
+--merge this text in one single file
+
+
+>>> import imp--to reload a package use this module
+>>> imp.reload(glob2)--reloads glob2 as i added doc string """This is a glob2 package"""
+
+<module 'glob2' from '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/glob2/__init__.py'>
+>>> glob2.__doc__
+
+'\nThis is a glob2 package\n'
+
+*****Dates and Times***
+-Comparing two dates/times
+-Create file with date as the name
+
+-Comparing two dates/times
+now=datetime.datetime.now()-datetime-module,datetime-class,now()-function/method
+yesterday=datetime.datetime(2016,12,27,3,0,0,0)
+delta=now-yesterday
+delta.days(),total_seconds->use dir(delta)
+
+**Script*
+import datetime
+
+r"""
+This script creates a new file with the current date time
+"""
+
+now=datetime.datetime.now()
+filename=now.strftime("%Y-%m-%d-%H-%M-%S-%f")
+
+#filename=now.date()
+#Create an empty file
+def create_file():
+    with open(str(filename),"w") as file:
+#with open(filename.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        file.write("") #Writing an empty string
+
+#Check strftime.org
+create_file()
+**
+Adding time:
+after=now+datetime.timedelta(days=4)
+after.date()
+
+*****Check if a file exists..if yest then delete and create a new file with data using ids=["B3","\nB4","\nB5","\nB6"]
+
+ids=["B3","\nB4","\nB5","\nB6"]
+
+if os.path.exists("ids_new_file"):
+    os.remove("ids_new_file")
+
+for id in ids:
+    with open("ids_new_file","a+") as file:
+        file.write(id)
+
+***Change delimiter in a file:use str.replace()
+>>> with open("delimited.csv","r") as file:
+...     content=file.readlines()
+...     chg_deli=[i.replace(",",";") for i in content]
+...
+
+***Alternative way to replace pattern/chars
+import re
+lst="Hello how are you,i'm doing great,really really very great!"
+re.sub('[!,?;]'," ",lst)
+O/P:Hello how are you i'm doing great really really very great "
+
+>>> chg_deli
+['hi;Fauzia;how are you\n', 'hello;atik;how are you\n']        
+
+***"""Gets average from three files and prints a third file
+Ways:
+1.using with open
+2.using -pandas using dataframe object
+"""
+
+#Using -with open
+import glob2;
+file_list=glob2.glob("File?.txt")
+avg_list=[]
+
+for f in file_list:
+    with open(f) as file:
+        content=file.readlines()
+        content_san_newline=[i.rstrip('\n') for i in content]
+        avg_count=os
+        avg_file=0
+        avg_count=len(content_san_newline)
+        for i in content_san_newline:
+            avg_file=avg_file+int(i)
+        avg_file=avg_file/avg_count
+        avg_list=avg_list+[avg_file]
+print(avg_list)
+
+#Using pandas dataframe
+import pandas
+m=[]
+file_list=glob2.glob("File?.txt")
+for f in file_list:
+    df=pandas.read_csv(f)
+    m=m+[float(df.mean())]
+print(m)
+
+'
+
+
+Jupyter notebook:
+Using it for python3.6:
+python3.6 -m ipykernel install 
+
+
+****Pandas:data analysis library:refer pandas_geo_code.py
+-dataframe object:will store the data of the first file
+pd.read_csv->by default will take first line as headers
+#df1=pandas.read_csv("supermarkets.csv",header=None,names= ['Address','City','State','Ctry','Nm','Emp'])
+
+df1.set_index('ID')
+df1.shape
+#Locate a particular element in data frame use "iloc"
+#First square bracket-rows;second for columns
+df1.iloc[4]['Name']->4th element for the column Name
+df1.iloc[:]['Name']->All rows for Name column
+df1.iloc[4][:]->All columns for 4th row
+
+
+#All fields with rows satisfying the filter condition
+#Locate all elements that satisfy the filter uisng "loc"
+df1.loc[df1["State"] == "CA 94114" ]["Name"]
+#rows with all values of "State Name" as "CA 94114"
+
+df1.ix[3,"Name"]     #Access rows based on index but columns based on column name and not the column position
+#Allows to access combination of indexes with labels
+
+#Refer to a row without index by actual name
+df1.ix["332 Hill St",4]
+
+df1.loc["332 Hill St":"551 Alvarado St","Employee":"State"] #Index for rows;column name for columns
+df1.iloc[0:3,0:2] #Upper bound exclusive
+
+#To access a single value
+df1.loc["3995 23rd St","Name"]  #returns intersection of these two co-ordinates
+
+
+df8.drop("Country",1)   #drops rows/columns mentioned,second option=0 for rows;1 for columns
+df8.drop("3666 21st St",0)
+
+#Dropping rows and columns
+df8.drop(df8.index[0:3],0)        #'index' for row indexes
+df8.drop(df8.columns[0:3],1)      #'columns' for column indexes
+
+#Adding rows/columns
+
+#Columns
+#df8["Continent"]=["North America"]    #new column:new value
+len(df8)    #Pass the above list with 6 items
+df8["Continent"]=df8.shape[0]*["North America"]     #Inplace operator:df8.shape[0]->number of rows->enter the new col value for all rows present
+df9=df8
+df9["Interests"]=["IT","Environment","Bio-science","Neural Networks","Automotive","Petroleum"]   #explicit mentions
+
+#Another way to add columns if you don't want to mention individual columns
+df10=df9
+
+df10["Sports"]=df9["Country"]+","+"Soccer"
+df10
+#ADD OR UPDATE NEW rows->cannot be done directly so need to transpose and then add a column and re-transpose
+
+#Transpose
+df10_t=df10.T
+
+df10_t["My Address"]=["My City","My Country",10,15,"My Name","My State","My Continent","My Interests","My Sports"]
+
+
+#update existing row i.e column
+df10_t["735 Dolores St"]=["My City","My Country",10,15,"My Name","My State","My Continent","My Interests","My Sports"]
+
+df11=df10_t.T
+
+####Geocoding####
+from geopy.geocoders import Nominatim
+gc=Nominatim()
+
+location=gc.geocode("address",timeout=10)
+
+###TO use geocoding with pandas data frame
+df1["Full-Addr"]=df1["Address"]+","+df1["City"]+","+df1["State"]+","+df1["Country"]
+df1["Co-ordinates"]=df1["Full-Addr"].apply(gc.geocode)
+
+df1["Longitude"]=df1["Co-ordinates"].apply(lambda x:x.latitude if x!= None else None)
+df1["Longitude"]=df1["Co-ordinates"].apply(lambda x:x.longitude if x!= None else None)
+
+
+
+**Code interospection**
+
+Misc:Printing with variables:
+print("Hey %s you'll turn 100 in the year %d"%(name,year))
+
+>>> x
+1000
+>>> print('This is a float %.4f'%(x))
+
+>>> num=10
+>>> print('Hello %d is num'%num)
+>>> print(f'Hello {num} is num')
+Hello 10 is num
+
+**List Comprehensions:Format(xx for yy in zz)
+Writing in the form of mathematical equation within the list definition in one line:
+"""write a program that prints out all the
+elements of the list that are less than 5.
+Extra:
+2.Write this in one line of Python.
+"""
+
+a = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+new_list=[]
+for i in a:
+    if i<50:
+        new_list.append(i)
+
+#Extra2:
+new_list2=[i for i in a if i<5 ]
+
+Exercise:
+Create a program that will take the list and assign each item of the list with the decile it belongs to and populates a new list/dictionary
+
+
+data=np.ones(100)
+all 100 ones in data list
+->>>> np.arange(30)
+array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+       17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
+>>> data2=data[70:]-np.arange(30)
+>>> data2
+array([  1.,  -1.,  -3.,  -5.,  -7.,  -9., -11., -13., -15., -17., -19.,
+       -21., -23., -25., -27., -29., -31., -33., -35., -37., -39., -41.,
+       -43., -45., -47., -49., -51., -53., -55., -57.])
+-Store the value in data instead of data2
+data[70:]-=np.arange(30)
+
+*******Switch/Case alternatives in Python:
+
+1)Dictionary:
+options = {0 : zero,
+           1 : sqr,
+           4 : sqr,
+           9 : sqr,
+           2 : even,
+           3 : prime,
+           5 : prime,
+           7 : prime,
+}
+
+2)Function:
+def f(x):
+    return {
+        'a': 1,
+        'b': 2,
+    }.get(x, 9)    # 9 is default if x not found
+
+Function uing lambdas:
+result = {
+  'a': lambda x: x * 5,
+  'b': lambda x: x + 7,
+  'c': lambda x: x - 2
+}[value](x)
+
+****Other alternatives: using OOps
+http://code.activestate.com/recipes/410692/
+http://code.activestate.com/recipes/410695/
+
+***Coursera Courses:Python for everybody****Complete the bonus lectures within
+https://www.coursera.org/learn/python-data/home/week/3
+
+
+******Dataframe manipulations****
+
+*****Geolocation services***Gives SSL certificate error so have to use the following:
+%%%%%%%%%%%%%'
+import requests
+requests.packages.urllib3.disable_warnings()
+
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    # Legacy Python that doesn't verify HTTPS certificates by default
+    pass
+else:
+    # Handle target environment that doesn't support HTTPS verification
+    ssl._create_default_https_context = _create_unverified_https_context
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+from geopy.geocoders import Nominatim
+geolocators=Nominatim()
+
+location=geolocators.geocode("3995 23rd St,San Francisco,CA 94114")
+output:
+Location(3995, 23rd Street, Noe Valley, SF, California, 94114, United States of America, (37.7529648, -122.431714, 0.0))
+
+location.latitude/location.longitude
+
+
+
+
+
+
+
+
+
+
+##***********Using PYTHON to access web data***************###
+****RegExp:
+---find:returns index
+---re.search():returns true/false
+---re.findall():returns all the occurences of the patter in the string
+
+import re
+
+re.search():See if a string matches a regular expression similar to find()[returns index] for strings
+***search can be used in if/else directly
+string="Hello,how are you"
+string.find("how")
+***find can be used in if/else but with a condition =1 for true and -1 for false
+
+>>> re.search("how",string,1)
+<_sre.SRE_Match object; span=(6, 9), match='how'>
+
+re.findall()
+re.findall("o",string)
+['o', 'o', 'o']
+string2="My 2 favorite Numbers are 7,14"
+y=re.findall('[0-9]+',string2)
+>>> print(y)
+['2', '7', '14']
+
+
+startswith()/re.search('^',)
+
+*****Networked programs:
+-TCP:Built on top of IP.Stores some data on its own as it assumes IP might lose some data,retransmits it if so.Handles flow control using "transmit window"
+-Socket:Abstraction/concept provided for applications like the tin-can telephone.[Client side<->Internet(socket)<->Web Server]
+-TCP Port:is an application specific/process specific software communications endpoint.It allows multiple networked applications to co-exist on the same server.
+the IP address/domain name of the server acts as the phone number while the port numbers act as the extensions to communicate with a specific application on the server.
+There's a list of TCP port numbers(usual but not compulsory) eg:port 80:Web Server(HTTP);443:HTTPS(Secure Web Server)
+
+
+
+
+******OOPS Using Python*******'
+Object oriented programming is a very structured approaach to code reuse.
+Python textbook:
+https://www.coursera.org/learn/python-databases/supplement/9UsgB/python-textbook
+
+Class:Cookie cutter->patter/structure with set of attributes/vode(function) and data(value of the attributes)->Dog
+Object:Instance of the class->Cookie->Tommy
+Methods/Messages->Code(fuction)->barks()
+
+
+Self:way to access the attributes within the class->all instances of the class will have access to the same value of the attribute
+,self i a global variable within the object
+
+class PartyAnimal:
+   x=0
+   def party(self):
+      self.x=self.x+1
+      print("So far ",self.x)
+
+an=PartyAnimal()   #Constructor
+an.party()
+an.party()
+an.party()
+
+O/P:
+So far 1
+So far 2
+So far 3
+
+
+Objects:objects are created,used and discarded
+-method(special blocks of code) called at the moment of creation->Constructor:usually used to setup variables:   def __init__(self-->commpulsory):print("I'm constructed")
+-method called at the moment of destruction->deconstructor  def __del__(self):print("I'm destructed")
+
+class PartyAnimal:
+    x=0
+    name=""
+    def __init__(self,nam):   #Constructor
+       self.name=nam
+       print(self.name," constructed!")
+
+    def party(self):
+        self.x+=1
+        print("So far for ",self.name," ",self.x)
+
+    def __del__(self):
+        print(self.name," destrcuted!")
+
+x=PartyAnimal("Jon")
+y=PartyAnimal("Jane")
+
+x.party()
+x.party()
+y.party()
+
+O/P:
+Jon  constructed!
+Jane  constructed!
+So far for  Jon   1
+So far for  Jon   2
+So far for  Jane   1
+Jon  destrcuted!
+Jane  destrcuted!
+
+
+Inheritance:Child class has all the capabilities of the parent and then some more of its own;child class extends the parent class
+Eg1:Parent class:Car;Child class:Sports Car
+Eg2:Parent musical_instrument;child:guitar
+
+class PartyAnimal:
+    x=0
+    name=""
+    def __init__(self,nam):
+        self.name=nam
+        print(self.name," constructed")
+
+    def party(self):
+        self.x+=1
+        print("So far ",self.x," for ",self.name)
+
+class Football_fan(PartyAnimal):
+    points=0
+
+    def touchdown(self):
+        self.points+=7
+        print("Touchdown for ",self.name,",points = ",self.points)
+
+a=PartyAnimal("Jim")
+b=Football_fan("Kevin")
+
+a.party()
+a.party()
+b.party()
+b.touchdown()
+
+
+O/P:
+Jim  constructed
+Kevin  constructed
+So far  1  for  Jim
+So far  2  for  Jim
+So far  1  for  Kevin
+Touchdown for  Kevin ,points =  7
+
+
+***Using Databases with Python***
+SQLLite-application used to interact with the database;small/light version of db built(embedded) into the application,already embedded in Python and many other languages
+Procedure:
+Read data from disparate sources:perform transformations->load into db:fetch from db for analysis and push to downstream->R,Excel,CSV,D3.js,etc
+
+
+
+*****Geocoding API******
+
+-Make a google map from user entered data
+-Uses the google GeoData API
+-Caches data in the database to avoid rate limiting and allow restarting
+-Vizualize in a browser using Google Maps API
+Even if you haven't got all the data you can still run these other things, because let's say you've got the first 500 of these records. Well, you can still make a pretty picture of 500 records and then later the next day you can then go get 500 more or 1000 more depending on your network connection, etc., etc. And also don't get yourself in trouble with your network service provider by running these things 24 hours a day and downloading gigabytes of data, and all of a sudden you're on some mobile device, and so just be care how much data that you download. So at some point you have the data cached. We use the word cache, which is kind of a local copy of something that's elsewhere. So we've got a nice copy. So now we don't need to talk to Google any more. We've got all of our data sitting in this database, so we will write a little program called geodump.py And it will write a loop that's going to loop through all the records in this database, loop, loop, loop, loop, loop. And this one prints it out, just on the screen and it tells you, oh yeah, and I also wrote as a side effect a bunch of the data into a file called where.js This is a JavaScript file and you can take a look at it. This is not a JavaScript class. And what I've given you is I've given you a whole bunch of HTML and JavaScript that takes care of all this and this HTML file reads this JavaScript file. And then calls the Google API to make all the little dots on the map for you, right? And so if you in effect pull more data in, and then run this program, and then run the program, and then hit refresh on the screen, new little dots will start popping up. Okay? Now, the screen doesn't actually go straight to the database you have to run the geodump.py But now we're kind of seeing this multi-step process, where you do this for a while. You get your data filled up, and then you say oh I've got myself some nice raw data here that's been cached and now I'm going to ru
+
+http://pythonlearn.com/code/geodata.zip
+
+Web Crawl;Index build;search
+Web Crawler:
+scans through a list of pages->finds links referred to in those pages->adds to the list.
+Mainly used to create a copy of all the visited pages for later processing by a search engine that will index these pages to provide faster searches.
+Policy:
+So, things like Google that are doing web crawling seriously, and we of course aren't going to be very serious about it in this class. But you've got to prioritize which pages, when to recheck the pages, how often they're changing. You don't want to crush a website. Why Google shouldn't just kind of beat this website up so badly that your Internet service provider gets upset. And then maybe you have lots of different web crawlers. And we're not going to write anything anywhere near as sophisticated as this. But it is something to think about. 
+
+
+
+******ADVANCED functions/concepts*****
+Pending: 
+namedTuple()
+mixin
+Decorator 
+Generator
+Check performance of your program using memory_profiler,time packages
+instance method
+attributes
+defaultdict
+Python Operator Overloading:https://www.programiz.com/python-programming/operator-overloading
+Python OOP
+
+
+1)iter
+Ref:https://www.hackerrank.com/challenges/merge-the-tools/forum
+2)regex: different wild cards:
+Ref:https://www.hackerrank.com/challenges/re-group-groups/problem?h_r=next-challenge&h_v=zen
+3)find,findall,search,finditer
+Ref:https://stackoverflow.com/questions/628903/performance-advantages-to-iterators
+When to use findall and when finditer
+findall can be used when the string is small as the matches will be loaded in memory.
+finditer is better utilized for larger strings when you don't want to cause memory overflow, the objects can be iterated one after the other, instead of loading them all in the memory at once.
+**For small datasets, iterator and list based approaches have similar performance. For larger datasets, iterators save both time and space.
+4)filter():
+Ref:https://www.hackerrank.com/challenges/validate-list-of-email-address-with-filter/forum
+5)lambda:
+https://www.hackerrank.com/challenges/reduce-function/problem
+6)OrderedDict()
+7)print(*d.values()): flattens the output
+print(*[item for item in d])
+[print(x, end=' ') for x in d]
+
+Ref:https://www.hackerrank.com/challenges/word-order/problem
+8)getattr:
+https://www.hackerrank.com/challenges/py-collections-deque/forum
+9)List comrehension with if  and aggregate function:
+string, substring = (input().strip(), input().strip())
+print(sum([ 1 for i in range(len(string)-len(substring)+1) if string[i:i+len(substring)] == substring]))
+Ref:
+https://www.hackerrank.com/challenges/find-a-string/forum
+10)List comprehension with if and ELSE:
+[True if i.isalpha() or i.isdigit() else False for i in s]
+11)Eval function if you want to pick a function based on some condition:
+for test in ('isalnum', 'isalpha', 'isdigit', 'islower', 'isupper'):
+        any(eval("c." + test + "()") for c in s)
+Alternative to achieve the above functionality:
+print(any(i.isdigit() for i in s))
+12)dir(__builtins__): To get a list of builtin modules in python        
+
+13)Simple way to write a function and call it in main:
+def wrap(string, max_width):
+    return textwrap.fill(string.strip(),max_width)
+        
+
+if __name__ == '__main__':
+    string, max_width = input(), int(input())
+    result = wrap(string, max_width)
+    print(result)
+    https://www.hackerrank.com/challenges/text-wrap/problem?h_r=next-challenge&h_v=zen&h_r=next-challenge&h_v=zen
+
+14)Print elements of a linkedlist in the reverse order:
+    if head:
+        reversePrint(head.next)
+        print(head.data)
+15) How to use input that is mapped to int or anything else:
+ip=map(int,input().split())
+
+>>> opr=list(map(int,input().split()))
+1 2 3 4 5
+>>> opr
+[1, 2, 3, 4, 5]
+
+16)Multi-threading(MT) Vs Multi-processing(MP):
+Ref:MT:Time 12:50:https://www.youtube.com/watch?v=IEEhzQoKtQU
+(Having a for loop to create 10 threads each of which will sleep for 5secs, without MT each function instance will run only after the prev instance has been completed , this will take 10*5 secs, but with MT as soon as the first thread sleeps, the second thread will be started and it would take considerably less time to finish all the processes.
+  In Py 3.2 they have added Python thread pool executor which is easier and efficient way to run threads and can switch over to multi processes as well depending on the problem we are trying to solve
+  import concurrent.futures
+  with concurrent.futures.ThreadPoolExecutor() as executor:
+    secs=[5,4,3,2,1]
+    results=[executor.submit(do_something,sec) for sec in secs] #Returns results in the order they've ended
+    for f in concurrent.futures.as_completed(results):
+      print(f.result())
+    #Above line alternateive using map below:
+    results=executor.map(do_something,sec) #Map Returns results in the order they're started
+    for result in result:
+      print(result)
+-Both ways achieve multi-tasking
+-Multiple threads live within the same process and share/work on the same address space. Global variables and heap memory can be shared.
+-Mulitple processes have diff address space. To communicate (IPC),can use shared memory or message pipe or file.
+-Threads are lightweight, while processes are heavy
+-Benefit of multiprocessing is that memory leak or error in one process will not affect other processes. Same is not true in case of the threads.
+-CPU intensive tasks generally add overhead in multithreading due to creating and deleting threads, so multiprocessing is the way to go for these tasks.
+-IO intensive tasks generally work well with Multi-threading
+
+17)Synchronization in Python Multi-Threading:
+-Acheived using Lock class in threading module to deal with race conditions.
+-Implemented using Semaphore object. It is simply a value in a designated place in OS/kernel storage that each process
+can check and then change.Depending on the value of this semaphore, the thread will either use the resource or wait for it before trying again. 
+
+
+18)Queues in Python can be implemented in different ways. See which one has better performance:
+https://www.geeksforgeeks.org/queue-in-python/
+
+19)Condition to check if either root is None,then return the other root: for BT(Can be implement for LL):
+        if not (t1 and t2):
+            return(t1 or t2)
+20)Iterators:(More Ref:https://www.programiz.com/python-programming/iterator)
+Are objects that can be iterated upon.
+myList=[1,2,3,4,5]
+iterobj=iter(myList)
+print(next(iterobj)) #First element
+print(next(iterobj)) #Second element
+#When all elements have been iterated, it will throw StopIteration exception
+>>> print(next(iobj))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+>>> l=[1,2,3]
+>>> iobj=iter(l)
+>>> try:
+...    print(next(iobj))
+...    print(next(iobj))
+...    print(next(iobj))
+...    print(next(iobj))
+... except StopIteration:
+...    print('No more values to return!')
+O/p:
+1
+2
+3
+No more values to return!
+#Handling iterators through for loops:
+for i in mylist: #Here the for loop creates an iterator object like 'iterobj' by calling iter() on the iterable 'myList'
+  print(i)
+
+#Same thing implemented through while loop
+iterObj=iter(myList)
+while True:
+  try:
+    print(next(iterObj))
+  except StopIteration:
+    break  
+
+
+21)Generators:(More Ref:https://www.programiz.com/python-programming/generator)
+Simple way of creating iterators.
+The overheads involved in iterators are automatically handled in python.
+Overheads of Iterators:
+-Implements class with __iter__() and __next__() method
+-Keep a track of internal states
+-StopIteration when there are no values
+Generators:
+-have __iter__ and __next__ functions implemented automatically
+-States and local vriables are remembered between successive calls
+-After the function terminates,StopIteration is raised automatically for subsequent calls
+>>> num1=[x*x for x in range(10)]
+>>> num1
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+>>> type(num1)
+<class 'list'>
+>>> num2=(x*x for x in range(10))
+>>> num2
+<generator object <genexpr> at 0x101ed0b48>
+>>> for i in num2:
+...    print(i)
+... 
+0
+1
+4
+9
+16
+25
+36
+49
+64
+81
+
+>>> next(num2)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+#So recreate the generator to iterate through it
+>>> num2=(x*x for x in range(10)) #All the elements are never held in memory, you can bring them in memory using list(num2)
+>>> next(num2)
+0
+>>> next(num2)
+1
+>>> next(num2)
+4
+>>> next(num2)
+9
+>>> next(num2)
+16
+>>> list(num2) #Brings whatever is left in the generator in memory
+#But you lose the advantages of generators in terms of performance as it is converted into a list now.
+[25, 36, 49, 64, 81]
+
+->Generators are better with performance as they don't hold all the values in-memory
+https://www.youtube.com/watch?v=bD05uGo_sVI
+import memory_profiler as mem_profile
+import random
+import time
+names = ['John', 'Corey', 'Adam', 'Steve', 'Rick', 'Thomas']
+majors = ['Math', 'Engineering', 'CompSci', 'Arts', 'Business']
+
+print('Memory Before: {} MB'.format(mem_profile.memory_usage()))
+#Create two functions, one uses list and another generator and see the difference in perf
+#List
+def people_list(people_count):
+  result=[]
+  for i in range(people_count):
+    person={'id':i,
+    'name':random.choice(names),
+    'major':random.choice(majors)}
+    result.append(person)
+  return result
+# Took 0.28764500000000015 seconds
+# Memory After: [63.53125] MB
+
+t1=time.clock()
+people=people_list(100000)
+t2=time.clock()
+
+#Generator:
+def people_generator(people_count):
+  for i in range(people_count):
+    person={'id':i,
+    'name':random.choice(names),
+    'major':random.choice(majors)}
+  yield person
+#Took 0.014848000000000194 seconds
+#Memory After: [37.19921875] MB
+
+t1=time.clock()
+people=people_generator(100000)
+t2=time.clock()
+
+print('Took {} seconds'.format(t2-t1))
+print('Memory After: {} MB'.format(mem_profile.memory_usage()))
+
+#Hence, generators can reduce upto half of the memory usage as compared to lists, while the time based performance GOT REDUCED TO .05% of the previous performance, which is huge.
+
