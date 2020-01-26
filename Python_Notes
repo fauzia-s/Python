@@ -266,11 +266,36 @@ Python:
 
 
 Functions:
+#Fibonacci:
+
+#Print fibonacci series before n: Here n is the value
 def fib(n):
-   a, b = 0, 1
-   while a < n:
-    print(a, end=" ")
-    a, b= b, a+b
+  a,b=0,1
+  while a<=n:
+    print(a,end=' ')
+    a,b=b,a+b
+  print()
+
+#Print the fibonacci series till nth number: Here n is the order
+def fib(n):
+  a,b=0,1
+  while n>=0:
+    print(a,end=' ')
+    a,b=b,a+b
+    n-=1
+  print()
+
+#Print the fibonacci series till the nth number: Here n is the order (Same as above)
+##Using memoization
+def fib_memo(n):
+  memo=[0,1]
+  i=2
+  if n==0 or n==1:
+    return n
+  while i<=n:   
+    memo.append(memo[i-1]+memo[i-2])
+    i+=1
+  return(list(i for i in memo[:n+1]))
    print()
 
 
