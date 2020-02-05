@@ -1402,3 +1402,24 @@ Traceback (most recent call last):
 TypeError: 'Student' object does not support item assignment
 26)Exceptions in Python:
         # https://leetcode.com/problems/balanced-binary-tree/discuss/35844/Fast-Python-Solution-using-Exceptions
+class inValidBST(BaseException):
+    pass
+
+class Solution:   
+    def helper(self,node,mins,maxs):
+        if not node:
+            return True
+        if mins<node.val<maxs:
+            left=self.helper(node.left,mins,node.val)
+            right=self.helper(node.right,node.val,maxs)
+            return (left and right)
+        else:
+            raise inValidBST() #can assign a global flag and return the value at the end, but that means we'll have to keep traversing the entire tree even if we've found an invalid node.
+    def isValidBST(self, root: TreeNode) -> bool:
+        if not root:
+            return True
+        try:
+            self.helper(root,float('-inf'),float('inf'))
+        except inValidBST:
+            return False
+        return True
