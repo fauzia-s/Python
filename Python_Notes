@@ -169,6 +169,8 @@ Small anonymous functions can be created with the lambda keyword. This function 
 Lambda functions can be used wherever function objects are required. They are syntactically restricted to a single expression. 
 Semantically, they are just syntactic sugar for a normal function definition. Like nested function definitions, lambda functions can reference variables from the containing scope:
 
+Applying lambda to a single variable or single tuple not a list:
+(lambda x,y:x*y)(2,5)
 >>>
 >>> def make_incrementor(n):
 ...     return lambda x: x + n
@@ -1329,7 +1331,7 @@ print('Memory After: {} MB'.format(mem_profile.memory_usage()))
 #Hence, generators can reduce upto half of the memory usage as compared to lists, while the time based performance GOT REDUCED TO .05% of the previous performance, which is huge.
 
 
-22)DefaultDict:
+22)DefaultDict:--Same functionality as setdefault see continued..
 >>> from collections import defaultdict
 >>> p=defaultdict()
 >> p
@@ -1347,7 +1349,12 @@ NameError: name 'j' is not defined
 100
 >>> p
 defaultdict(<function <lambda> at 0x102b9dea0>, {'j': 100, 'k': 100})
-
+...
+--Setdefault:
+d={}
+d.setdefault(k,defaultVal)
+->d.setdefault(0,[])->d[0]=[]
+d[0].append(1)=d[0]=[1]
 23)OrderedDict():Preserves the order in which the items are entered in the dictionary
 >>> from collections import OrderedDict
 >>> d = {'banana': 3, 'apple':4, 'pear': 1, 'mango': 2}
@@ -1426,4 +1433,6 @@ class Solution:
 
 27)Bit manipulation:
 LC Question:260:Single Number III: Can be solved using bit manipulation XOR
+-Used mostly in Data compression/Encoding/Decoding data
+-
 
