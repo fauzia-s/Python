@@ -1338,7 +1338,7 @@ print('Memory After: {} MB'.format(mem_profile.memory_usage()))
 defaultdict(None, {})
 >>> p.items()
 dict_items([])
->>> p=defaultdict(lambda:100)
+>>> p=defaultdict(lambda:100) OR ans_dict = collections.defaultdict(list) OR ans_dict = collections.defaultdict(lambda:[])
 >>> p[j]
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
@@ -1350,10 +1350,11 @@ NameError: name 'j' is not defined
 >>> p
 defaultdict(<function <lambda> at 0x102b9dea0>, {'j': 100, 'k': 100})
 ...
---Setdefault:
+--Setdefault:..from continued..
+
 d={}
 d.setdefault(k,defaultVal)
-->d.setdefault(0,[])->d[0]=[]
+->d.setdefault(0,[])->d[0]=[]  -->equivalent to d.get(0,[])->also set d[0] to []
 d[0].append(1)=d[0]=[1]
 23)OrderedDict():Preserves the order in which the items are entered in the dictionary
 >>> from collections import OrderedDict
