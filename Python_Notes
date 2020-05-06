@@ -362,7 +362,7 @@ round(8.6)->9
 round(8.2)->8
 
 *Math functions:preference:**(exponent);/(div);*(mult);+-
-import math;->extended module->to use sqrt function to chk for other functions->dir(math) to get the definition of a function isfinite->help(math.isfinite)
+import math;->extended module->to use sqrt function to chk for other functions->dir(math) to get the help for a function isfinite->help(math.isfinite)
 
 Exercise 1:Create a function to convert celsius to fahrenheit.
 0 degree is 32
@@ -455,7 +455,8 @@ dict[key]=value
 --Sort
 -Dictionaries do not have sort function->convert into a list of tuples using .items() and then sort into a new list using for loop(Check assignments)
 -use list comprehension to perform the above step
-
+Multikey sorting:
+sorted(list, key=lambda x: (x[0], -x[1]))
 
 -Printing 10 from the following dictionary:
 money={"saving_account":200, "checking_account":100, "under_bed":[500,10,100]}
@@ -1115,6 +1116,9 @@ finditer is better utilized for larger strings when you don't want to cause memo
 Ref:https://www.hackerrank.com/challenges/validate-list-of-email-address-with-filter/forum
 5)lambda:
 https://www.hackerrank.com/challenges/reduce-function/problem
+Reduce function applies a function to all the values passed 
+reduce(gcd,list)->gcd=Greatest common denominator
+
 6)OrderedDict()
 7)print(*d.values()): flattens the output
 print(*[item for item in d])
@@ -1329,7 +1333,7 @@ print('Took {} seconds'.format(t2-t1))
 print('Memory After: {} MB'.format(mem_profile.memory_usage()))
 
 #Hence, generators can reduce upto half of the memory usage as compared to lists, while the time based performance GOT REDUCED TO .05% of the previous performance, which is huge.
-
+https://data-flair.training/blogs/python-generator-vs-iterator/
 
 22)DefaultDict:--Same functionality as setdefault see continued..
 >>> from collections import defaultdict
@@ -1437,3 +1441,4 @@ LC Question:260:Single Number III: Can be solved using bit manipulation XOR
 -Used mostly in Data compression/Encoding/Decoding data
 -
 
+**To get function definition/actual code:
